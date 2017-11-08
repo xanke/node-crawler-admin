@@ -81,7 +81,7 @@
               if (res.code != 200) {
                 this.loading = !this.loading
                 this.handleError(res)
-              } else {
+              } else { 
                 this.refreshVerify()
                 if (this.checked) {
                   Cookies.set('rememberPwd', true, { expires: 1 })
@@ -110,7 +110,7 @@
     },
     created() {
       this.checkIsRememberPwd()
-      this.apiPost('admin/base/getConfigs').then((res) => {
+      this.apiPost('/admin/base/getConfigs').then((res) => {
         this.handelResponse(res, (data) => {
           document.title = data.SYSTEM_NAME
           this.systemName = data.SYSTEM_NAME

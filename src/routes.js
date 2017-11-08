@@ -21,6 +21,10 @@ import usersList from './components/Administrative/personnel/users/list.vue'
 import usersAdd from './components/Administrative/personnel/users/add.vue'
 import usersEdit from './components/Administrative/personnel/users/edit.vue'
 
+import tasksList from './components/Administrative/nx/tasks/list.vue'
+import tasksAdd from './components/Administrative/nx/tasks/add.vue'
+import tasksEdit from './components/Administrative/nx/tasks/edit.vue'
+
 /**
  * meta参数解析
  * hideLeft: 是否隐藏左侧菜单，单页菜单为true
@@ -44,6 +48,15 @@ const routes = [
       { path: 'menu/list', component: menuList, name: 'menuList', meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }},
       { path: 'menu/add', component: menuAdd, name: 'menuAdd', meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }},
       { path: 'menu/edit/:id', component: menuEdit, name: 'menuEdit', meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }}
+    ]
+  },
+  {
+    path: '/home',
+    component: Home,
+    children: [
+      { path: 'tasks/list', component: tasksList, name: 'tasksList', meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }},
+      { path: 'tasks/add', component: tasksAdd, name: 'tasksAdd', meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }},
+      { path: 'tasks/edit/:id', component: tasksEdit, name: 'tasksEdit', meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }}
     ]
   },
   {

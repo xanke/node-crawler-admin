@@ -15,6 +15,11 @@ var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 var DEV_HOST = JSON.stringify('http://localhost:80/')
 var PUB_HOST = JSON.stringify('http://localhost:80/')
 
+function resolve(dir) {
+  return path.join(__dirname, '..', dir)
+}
+
+
 module.exports = {
   entry: {
     app: './src/main.js'
@@ -37,6 +42,7 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
       'vue$': 'vue/dist/vue',
+      '@': resolve('src'),
       'src': path.resolve(__dirname, '../src'),
       'assets': path.resolve(__dirname, '../src/assets'),
       'components': path.resolve(__dirname, '../src/components')
@@ -47,16 +53,16 @@ module.exports = {
   },
   module: {
     preLoaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint'
-      },
-      {
-        test: /\.vue$/,
-        exclude: /node_modules/,
-        loader: 'eslint'
-      }
+      // {
+      //   test: /\.js$/,
+      //   exclude: /node_modules/,
+      //   loader: 'eslint'
+      // },
+      // {
+      //   test: /\.vue$/,
+      //   exclude: /node_modules/,
+      //   loader: 'eslint'
+      // }
     ],
     loaders: [
       {
