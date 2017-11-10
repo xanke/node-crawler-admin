@@ -43,8 +43,8 @@
   </div>
 </template>
 <script>
-  import http from '../../../../assets/js/http'
-  import fomrMixin from '../../../../assets/js/form_com'
+  import http from '@/assets/js/http'
+  import fomrMixin from '@/assets/js/form_com'
 
   export default {
     data() {

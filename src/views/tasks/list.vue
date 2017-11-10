@@ -15,7 +15,7 @@
 
 		<div class="m-b-20">
 			<el-button v-on:click="addDialog.show = true"   >
-				<i class="el-icon-plus"></i>&nbsp;&nbsp;添加用户组
+				<i class="el-icon-plus"></i>&nbsp;&nbsp;新建任务
 			</el-button>
 
 

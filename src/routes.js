@@ -22,8 +22,8 @@ import usersAdd from './components/Administrative/personnel/users/add.vue'
 import usersEdit from './components/Administrative/personnel/users/edit.vue'
 
 import tasksList from '@/views/tasks/list.vue'
-import tasksAdd from './components/Administrative/nx/tasks/add.vue'
-import tasksEdit from './components/Administrative/nx/tasks/edit.vue'
+import tasksAdd from '@/views/tasks/add.vue'
+import tasksEdit from '@/views/tasks/edit.vue'
 
 /**
  * meta参数解析
