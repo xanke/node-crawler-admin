@@ -6,7 +6,7 @@
 			</el-form-item>
 			<el-form-item label="上级部门" prop="pid">
         <el-select v-model="form.pid" placeholder="上级部门" class="w-200">
-          <el-option v-for="item in options" :label="item.title" :value="item.id"></el-option>
+          <el-option :key="index" v-for="(item, index) in options" :label="item.title" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
 			<el-form-item>
