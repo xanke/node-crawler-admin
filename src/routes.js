@@ -21,7 +21,7 @@ import usersList from './components/Administrative/personnel/users/list.vue'
 import usersAdd from './components/Administrative/personnel/users/add.vue'
 import usersEdit from './components/Administrative/personnel/users/edit.vue'
 
-import tasksList from './components/Administrative/nx/tasks/list.vue'
+import tasksList from '@/views/tasks/list.vue'
 import tasksAdd from './components/Administrative/nx/tasks/add.vue'
 import tasksEdit from './components/Administrative/nx/tasks/edit.vue'
 

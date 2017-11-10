@@ -8,7 +8,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import ElementUI from 'element-ui'
 
-// import 'element-ui/lib/theme-default/index.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import routes from './routes'
 import VueRouter from 'vue-router'
@@ -17,8 +16,8 @@ import filter from './assets/js/filter'
 import _g from './assets/js/global'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import 'assets/css/global.css'
-import 'assets/css/base.css'
+import '@/assets/css/global.css'
+import '@/assets/css/base.css'
 
 // axios.defaults.baseURL = HOST
 axios.defaults.timeout = 1000 * 15
