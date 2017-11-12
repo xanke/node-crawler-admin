@@ -30,12 +30,28 @@ module.exports = {
         }
       },
 
-      '/home': {
-        target: 'http://localhost:9100/home',
+      '/task': {
+        target: 'http://localhost:9100/task',
         pathRewrite: {
-          '^/home': '/'
+          '^/task': '/'
         }
-      }
+      },
+
+      '/website': {
+        target: 'http://localhost:9100/website',
+        pathRewrite: {
+          '^/website': '/'
+        }
+      },
+
+      '/api': {
+        target: 'http://localhost:9100/api',
+        pathRewrite: {
+          '^/api': '/'
+        }
+      },
+
+ 
 
 
     },

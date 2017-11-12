@@ -1,59 +1,40 @@
 <template>
 	<div>
 
-  <el-dialog
-    title="提示"
-    :visible.sync="addDialog.show"
-    width="30%"
-    :before-close="handleClose">
-    <span>这是一段信息</span>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="addDialog.show = false">取 消</el-button>
-      <el-button type="primary" @click="addDialog.show = false">确 定</el-button>
-    </span>
-  </el-dialog>
+    <el-dialog
+      title="提示"
+      :visible.sync="addDialog.show"
+      width="30%"
+    >
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addDialog.show = false">取 消</el-button>
+        <el-button type="primary" @click="addDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
 
 		<div class="m-b-20">
 			<el-button v-on:click="addDialog.show = true"   >
 				<i class="el-icon-plus"></i>&nbsp;&nbsp;新建任务
 			</el-button>
-
-
 		</div>
-		<el-table
-		:data="tableData"
-		style="width: 100%"
-		@selection-change="selectItem">
-			<el-table-column
-			type="selection"
-			width="50">
-			</el-table-column>
-			<el-table-column
-			label="组名"
-			prop="title">
-			</el-table-column>
-      <el-table-column
-      label="描述"
-      prop="remark">
-      </el-table-column>
-			<el-table-column
-			label="状态"
-      prop="status"
-			width="100">
+		<el-table :data="tableData" style="width: 100%" @selection-change="selectItem">
+			<el-table-column type="selection" width="50"></el-table-column>
+			<el-table-column label="名称" prop="title"></el-table-column>
+      <el-table-column label="网站数" prop="website_num"></el-table-column>
+			<el-table-column label="状态" prop="status" width="100">
         <template slot-scope="scope">
           <div>
             {{ scope.row.status | status }}
           </div>
         </template>
 			</el-table-column>
-			<el-table-column
-			label="操作"
-			width="200"> 
+			<el-table-column label="操作" width="200"> 
         <template slot-scope="scope">
   				<div>
   					<span>
-  						<router-link :to="{ name: 'groupsEdit', params: { id: scope.row.id }}">
-                <el-button size="small" type="primary" @click="confirmDelete(scope.row)">编辑</el-button>
+  						<router-link :to="{ name: 'tasksEdit', params: { id: scope.row.id }}">
+                <el-button size="small" type="primary">进入</el-button>
   						</router-link>
   					</span>
   					<span>
@@ -108,7 +89,7 @@
         })
       },
       getgroups() {
-        this.apiGet('admin/groups').then((res) => {
+        this.apiGet('task').then((res) => {
           this.handelResponse(res, (data) => {
             this.tableData = data
           })
