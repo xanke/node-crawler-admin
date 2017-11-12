@@ -113,7 +113,6 @@
                 </el-form>
 
                 <div>
-                  
                   {{props.row.scan_data}}
                 </div>
 
@@ -141,10 +140,10 @@
             <el-table-column label="网址" prop="url"></el-table-column>
             <el-table-column label="采集数量" prop="scan_num"></el-table-column>
             <el-table-column label="运行时间" prop="run_time"></el-table-column>
-            <el-table-column  label="操作" width="100">
+            <el-table-column  label="操作" width="120">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-                <el-button type="text" size="small">编辑</el-button>
+                <el-button  @click="wmTest(scope.row)" type="button" size="mini">运行</el-button>
               </template>
             </el-table-column>
 
@@ -168,6 +167,57 @@
 
 
     </el-form>
+
+
+
+<el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
+    
+
+      <el-table :data="websiteScanDialog.row.rule_list" style="width: 100%">
+        <el-table-column prop="url" label="网址" ></el-table-column>
+        <el-table-column prop="key" label="Key" width="150"></el-table-column>
+        <!-- <el-table-column prop="page" label="page" width="80"></el-table-column> -->
+        <!-- <el-table-column prop="page_times" label="p_times" width="80"></el-table-column> -->
+        <el-table-column prop="page_end" label="p_end" width="80"></el-table-column>
+        <el-table-column prop="page_run" label="p_run" width="80"></el-table-column>
+        <el-table-column prop="status" label="ststus" width="80"></el-table-column>
+
+        <el-table-column  label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row)"  type="primary" size="mini">运行</el-button>
+
+            <el-button  @click="websiteRuleRest(websiteScanDialog.row, scope.row)"  type="default" size="mini">重置</el-button>
+
+
+            
+
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="p-l-20 bor-b-ccc bg-gra">
+
+ 
+        <el-button size="mini" type="primary" @click="openWebsiteRuleDialog(websiteScanDialog.row)">增加规则</el-button>
+
+        <el-button  @click="wmTest(websiteScanDialog.row)" type="button" size="mini">运行</el-button>
+
+      </div>
+
+
+
+    <scanArrList :arr="websiteScanDialog.data.arr"></scanArrList>
+ 
+
+
+
+   
+
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="websiteScanDialog.visible = false">取 消</el-button>
+    <el-button type="primary" @click="addWebsite()">确 定</el-button>
+  </div>
+</el-dialog>
 
 
 
@@ -245,11 +295,14 @@
   </div>
 </template>
 <script>
+import scanArrList from '@/components/Common/scanArrList.vue'
 
   import websiteAdd from '@/views/website/add'
 
   import http from '@/assets/js/http'
   import fomrMixin from '@/assets/js/form_com'
+
+import Qs    from 'qs'
 
   export default {
     data() {
@@ -305,6 +358,15 @@
           }
         ],
 
+
+        websiteScanDialog: {
+          visible: false,
+          data: {},
+          row: {},
+          loading: false,
+        },
+
+
         addWebsiteDialog: {
           visible: false,
           form: {
@@ -335,8 +397,6 @@
         },
 
 
-
-
         form: {
           id: null,
           title: '',
@@ -349,6 +409,10 @@
       
       }
     },
+    components: {
+      scanArrList
+    },
+
     methods: {
 
       wmAddNode() {
@@ -383,8 +447,140 @@
       },
 
       //采集测试
-      wmTest() {
-        console.log(this.websiteModel)
+      wmTest(row) {
+
+        this.websiteScanDialog.visible = true
+
+        this.apiGet('website/' + row.id).then((res) => {
+          this.handelResponse(res, (data) => {
+            
+            row.rule_list = data.rule_list
+            this.websiteScanDialog.row = row
+
+ 
+
+          })
+        })
+
+
+      },
+
+      //重置采集规则
+      websiteRuleRest(row, item) {
+
+        let {id, page} = item
+        let arg = {
+          status: 0,
+          hash: 0,
+          page_run: page
+        }
+
+        this.apiPut('website/rule/', id, arg).then((res) => {
+          this.handelResponse(res, (data) => {
+            _g.toastMsg('success', '已重置')
+
+            this.getWebsiteInfo(row)
+          })
+        })
+
+      },
+
+      websiteRuleRun(row, item) {
+        let {key, url, page, page_run, page_times, id, hash} = item
+
+        page = page_run
+        if (page_times > 0 ) {
+          let __xd_page__ = page * page_times
+          url = url.replace('${page}', '${__xd_page__}')
+        }
+
+        let nItem = {
+          id,
+          page,
+          url : eval('`' + url + '`'),
+          hash
+        }
+
+        this.scanWebsite(row, nItem)
+
+      },
+
+      //采集网站
+      scanWebsite(row, item) {
+
+
+        let {url, page, id} = item
+
+        function S4() {  
+           return (((1+Math.random())*0x10000)|0).toString(16).substring(1);  
+        };  
+        function guid() {  
+           return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());  
+        };  
+
+
+        let oid = guid()
+
+        let json = {
+          url,
+          'model': JSON.stringify(row.model),
+          oid
+        }
+
+        let host = '//127.0.0.1:1112/scan'
+        host = '//47.88.52.88:1112/scan'
+
+        axios.post(host, Qs.stringify(json), {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }).then(response => response.data)
+          .then(data => {
+          
+          let {arr, oid, hash} = data
+
+          arr.forEach((item) => {
+            let {price, url} = item
+            if (typeof(price) !== 'number') {
+              item.price = price.replace('$', '').replace('USD', '').replace('Sales Price', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
+            }
+            item.name = item.name.replace(/[\r\n]/g,"").replace(/(^\s*)|(\s*$)/g, "").replace(/\'/g,"\\'")
+            item.image = row.image_url + item.image
+
+            if (url.indexOf('http://') == -1 || url.indexOf('https://') == -1) {
+              item.url = row.url + url
+            }
+
+          })
+
+          this.websiteScanDialog.data = data
+
+
+          let arg = {
+            oid,
+            hash
+          }
+
+          if (hash == item.hash) {
+            _g.toastMsg('success', '已完成此规则')
+            arg.status = 1
+
+          } else {
+            arg.page_run = page + 1
+
+          }
+
+ 
+
+
+          this.apiPut('website/rule/', id, arg).then((res) => {
+            this.handelResponse(res, (data) => {
+              this.getWebsiteInfo(row)
+            })
+          })
+
+        })
+
       },
 
       //打开增加网站规则
