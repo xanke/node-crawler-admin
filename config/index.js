@@ -51,6 +51,13 @@ module.exports = {
         }
       },
 
+      '/scan': {
+        target: 'http://localhost:9100/scan',
+        pathRewrite: {
+          '^/scan': '/'
+        }
+      },
+
  
 
 

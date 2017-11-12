@@ -200,7 +200,7 @@
  
         <el-button size="mini" type="primary" @click="openWebsiteRuleDialog(websiteScanDialog.row)">增加规则</el-button>
 
-        <el-button  @click="wmTest(websiteScanDialog.row)" type="button" size="mini">运行</el-button>
+        <el-button  @click="addScanData" type="button" size="mini">入库</el-button>
 
       </div>
 
@@ -446,6 +446,23 @@ import Qs    from 'qs'
 
       },
 
+
+      addScanData() {
+
+        let json = {
+          data: this.websiteScanDialog.data.arr
+        }
+
+        this.apiPost('scan/data', json).then((res) => {
+          this.handelResponse(res, (data) => {
+            _g.toastMsg('success', '入库成功')
+            console.log(data)
+          })
+        })
+
+
+
+      },
       //采集测试
       wmTest(row) {
 
@@ -552,6 +569,9 @@ import Qs    from 'qs'
             }
 
           })
+
+
+          console.log(JSON.stringify(arr))
 
           this.websiteScanDialog.data = data
 
