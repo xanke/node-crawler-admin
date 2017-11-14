@@ -6,7 +6,7 @@
         <li v-for="(item, index) in arr" class="arr-item">
 
           <a target="_blank" :href="item.url">
-            <img :src="item.image" />
+            <!-- <img :src="item.image" /> -->
             <p class="title">{{item.name}}</p>
             <p class="price">{{item.price}}</p>
 

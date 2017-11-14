@@ -545,7 +545,7 @@ import Qs    from 'qs'
         }
 
         let host = '//127.0.0.1:1112/scan'
-        host = '//47.88.52.88:1112/scan'
+        // host = '//47.88.52.88:1112/scan'
 
         axios.post(host, Qs.stringify(json), {
           headers: {
@@ -558,11 +558,49 @@ import Qs    from 'qs'
 
           arr.forEach((item) => {
             let {price, url} = item
-            if (typeof(price) !== 'number') {
-              item.price = price.replace('$', '').replace('USD', '').replace('Sales Price', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
+
+            let nPrice = ''
+            if (typeof(price) == 'string') {
+             
+              nPrice = price
+
+              if (price.indexOf('-') !== -1) {
+                nPrice = price.split('-')[0]
+              }
+
+            } else if (typeof(price) == 'object') {
+              price.forEach((item) => {
+                if (item.indexOf('-') !== -1) {
+                  nPrice = item.split('-')[0]
+                }
+                if (item.indexOf('\n') !== -1) {
+                  nPrice = item.split('\n')
+
+                  nPrice.forEach((item) => {
+                    if (item) {
+                      if (item.indexOf('-') !== -1) {
+                        nPrice = item.split('-')[0]
+                      } else {
+                        nPrice = item
+                      }
+                    }
+                  })
+                }
+              })
+
+            } else {
+              nPrice = price
             }
+
+            nPrice = nPrice.replace('$', '').replace('USD', '').replace('Sales Price', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
+
+            item.price = nPrice
+
             item.name = item.name.replace(/[\r\n]/g,"").replace(/(^\s*)|(\s*$)/g, "").replace(/\'/g,"\\'")
             item.image = row.image_url + item.image
+
+            item.brand = row.title
+            item.wid   = row.id
 
             if (url.indexOf('http://') == -1 || url.indexOf('https://') == -1) {
               item.url = row.url + url
@@ -570,11 +608,7 @@ import Qs    from 'qs'
 
           })
 
-
-          console.log(JSON.stringify(arr))
-
           this.websiteScanDialog.data = data
-
 
           let arg = {
             oid,
@@ -590,17 +624,12 @@ import Qs    from 'qs'
 
           }
 
- 
-
-
           this.apiPut('website/rule/', id, arg).then((res) => {
             this.handelResponse(res, (data) => {
               this.getWebsiteInfo(row)
             })
           })
-
         })
-
       },
 
       //打开增加网站规则
@@ -636,8 +665,6 @@ import Qs    from 'qs'
           })
         })
       },
-
-
 
       //获取网站详情
       getWebsiteInfo(row) {
