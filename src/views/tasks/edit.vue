@@ -1,5 +1,8 @@
 <template>
   <div>
+
+    <el-button @click="getTaskInfo">刷新</el-button>
+    <el-button @click="addScanSync">同步</el-button>
     <el-form ref="form" :model="form"   label-width="130px">
       <el-form-item label="名称" prop="title">
         <el-input v-model.trim="form.title" class="h-40 w-200"></el-input>
@@ -17,7 +20,7 @@
       <el-form-item label="网站">
         <div class="bor-gray  ovf-y-auto bor-ra-5 bg-wh">
 
-          <el-table @expand-change="getWebsiteInfo" :data="form.website_list" style="width: 100%; height: 1800px">
+          <el-table @expand-change="getWebsiteInfo" :data="form.website_list" style="width: 100%; height: 1000px">
             <el-table-column type="expand">
               <template slot-scope="props" >
 
@@ -83,38 +86,18 @@
                       </el-row>
                     </div>
 
-              
-
-                    <el-table :data="props.row.rule_list" style="width: 100%">
-                      <el-table-column prop="url" label="网址" ></el-table-column>
-                      <el-table-column prop="key" label="Key" width="250"></el-table-column>
-                      <el-table-column prop="page" label="page" width="80"></el-table-column>
-                      <el-table-column prop="page_times" label="p_times" width="80"></el-table-column>
-                      <el-table-column prop="page_end" label="p_end" width="80"></el-table-column>
-                      <el-table-column prop="page_run" label="p_run" width="80"></el-table-column>
-                    </el-table>
-
-                    <div class="p-l-20 bor-b-ccc bg-gra">
-
-               
-                      <el-button size="mini" type="primary" @click="openWebsiteRuleDialog(props.row)">增加规则</el-button>
-
-                    </div>
+ 
 
 
 
                     <div class="p-l-20 bor-b-ccc bg-gra">
                       <el-button size="mini" type="primary" @click="saveWebsite(props.row)">保存</el-button>
-                      <el-button size="mini" type="primary" @click="wmTest(props.row)">测试</el-button>
                     </div>
                   
 
                   </div>
                 </el-form>
-
-                <div>
-                  {{props.row.scan_data}}
-                </div>
+ 
 
       
 
@@ -139,11 +122,12 @@
             <el-table-column label="名称" prop="title"></el-table-column>
             <el-table-column label="网址" prop="url"></el-table-column>
             <el-table-column label="采集数量" prop="scan_num"></el-table-column>
-            <el-table-column label="运行时间" prop="run_time"></el-table-column>
-            <el-table-column  label="操作" width="120">
+            <el-table-column label="同步数量" prop="sync_num"></el-table-column>
+            <el-table-column label="上次运行" prop="run_time"></el-table-column>
+            <el-table-column  label="操作" width="200">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-                <el-button  @click="wmTest(scope.row)" type="button" size="mini">运行</el-button>
+                <el-button  @click="wmTest(scope.row)" type="button" size="mini">采集</el-button>
+                <el-button  @click="scanDataCount(scope.row)" type="primary" size="mini">统计</el-button>
               </template>
             </el-table-column>
 
@@ -170,7 +154,7 @@
 
 
 
-<el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
+    <el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
     
 
       <el-table :data="websiteScanDialog.row.rule_list" style="width: 100%">
@@ -182,15 +166,11 @@
         <el-table-column prop="page_run" label="p_run" width="80"></el-table-column>
         <el-table-column prop="status" label="ststus" width="80"></el-table-column>
 
-        <el-table-column  label="操作" width="150">
+        <el-table-column  label="操作" width="300">
           <template slot-scope="scope">
-            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row)"  type="primary" size="mini">运行</el-button>
-
+            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row, true)"  type="primary" size="mini">运行</el-button>
+            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row, false)"  type="default" size="mini">测试</el-button>
             <el-button  @click="websiteRuleRest(websiteScanDialog.row, scope.row)"  type="default" size="mini">重置</el-button>
-
-
-            
-
           </template>
         </el-table-column>
       </el-table>
@@ -201,6 +181,8 @@
         <el-button size="mini" type="primary" @click="openWebsiteRuleDialog(websiteScanDialog.row)">增加规则</el-button>
 
         <el-button  @click="addScanData" type="button" size="mini">入库</el-button>
+
+        <el-button  @click="addScanSync" type="button" size="mini">同步</el-button>
 
       </div>
 
@@ -446,45 +428,64 @@ import Qs    from 'qs'
 
       },
 
+      scanDataCount(row) {
+        let json = {
+          id: row.id
+        }
+        this.apiPost('scan/data/count', json).then((res) => {
+          this.handelResponse(res, (data) => {
+            _g.toastMsg('success', '统计成功')
+            this.getTaskInfo()
+          })
+        })
+
+      },
 
       addScanData() {
 
         let json = {
+          wid: this.websiteScanDialog.row.id,
           data: this.websiteScanDialog.data.arr
         }
 
         this.apiPost('scan/data', json).then((res) => {
           this.handelResponse(res, (data) => {
-            _g.toastMsg('success', '入库成功')
+            _g.toastMsg('success', '入库' + data.add + '条')
             console.log(data)
           })
         })
 
+      },
 
+      addScanSync() {
+
+        let json = {
+          // data: this.websiteScanDialog.data.arr
+        }
+
+        this.apiPost('scan/sync', json).then((res) => {
+          this.handelResponse(res, (data) => {
+
+            _g.toastMsg('success', '同步' + data.add + '条')
+          })
+        })
 
       },
+
       //采集测试
       wmTest(row) {
-
         this.websiteScanDialog.visible = true
 
         this.apiGet('website/' + row.id).then((res) => {
           this.handelResponse(res, (data) => {
-            
             row.rule_list = data.rule_list
             this.websiteScanDialog.row = row
-
- 
-
           })
         })
-
-
       },
 
       //重置采集规则
       websiteRuleRest(row, item) {
-
         let {id, page} = item
         let arg = {
           status: 0,
@@ -499,10 +500,10 @@ import Qs    from 'qs'
             this.getWebsiteInfo(row)
           })
         })
-
       },
 
-      websiteRuleRun(row, item) {
+      //采集规则生成url
+      websiteRuleRun(row, item, addData = false) {
         let {key, url, page, page_run, page_times, id, hash} = item
 
         page = page_run
@@ -517,15 +518,11 @@ import Qs    from 'qs'
           url : eval('`' + url + '`'),
           hash
         }
-
-        this.scanWebsite(row, nItem)
-
+        this.scanWebsite(row, nItem, addData)
       },
 
       //采集网站
-      scanWebsite(row, item) {
-
-
+      scanWebsite(row, item, addData) {
         let {url, page, id} = item
 
         function S4() {  
@@ -534,7 +531,6 @@ import Qs    from 'qs'
         function guid() {  
            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());  
         };  
-
 
         let oid = guid()
 
@@ -545,7 +541,7 @@ import Qs    from 'qs'
         }
 
         let host = '//127.0.0.1:1112/scan'
-        // host = '//47.88.52.88:1112/scan'
+        host = '//47.88.52.88:1112/scan'
 
         axios.post(host, Qs.stringify(json), {
           headers: {
@@ -602,7 +598,7 @@ import Qs    from 'qs'
             item.brand = row.title
             item.wid   = row.id
 
-            if (url.indexOf('http://') == -1 || url.indexOf('https://') == -1) {
+            if (url.indexOf('http://') == -1 && url.indexOf('https://') == -1) {
               item.url = row.url + url
             }
 
@@ -629,6 +625,11 @@ import Qs    from 'qs'
               this.getWebsiteInfo(row)
             })
           })
+
+          if (addData) {
+            this.addScanData()
+          }
+
         })
       },
 
