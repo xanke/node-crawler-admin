@@ -1,26 +1,26 @@
 <template>
   <div>
 
-    <el-button @click="getTaskInfo">刷新</el-button>
-    <el-button @click="addScanSync">同步</el-button>
+
     <el-form ref="form" :model="form"   label-width="130px">
       <el-form-item label="名称" prop="title">
         <el-input v-model.trim="form.title" class="h-40 w-200"></el-input>
       </el-form-item>
  
-      <el-form-item label="备注">
-        <el-input
-          type="textarea"
-          :rows="2"
-          placeholder="备注"
-          v-model="form.desc"
-          class="w-200">
-        </el-input>
+      <el-form-item>
+        <el-button type="primary" @click="addWebsiteDialog.visible = true">增加网站</el-button>
+
+        <el-button @click="getTaskInfo">刷新</el-button>
+        <el-button @click="addScanSync">同步</el-button>
+
+
       </el-form-item>
+
+
       <el-form-item label="网站">
         <div class="bor-gray  ovf-y-auto bor-ra-5 bg-wh">
 
-          <el-table @expand-change="getWebsiteInfo" :data="form.website_list" style="width: 100%; height: 1000px">
+          <el-table @expand-change="getWebsiteInfo" :data="form.website_list"  height="800">
             <el-table-column type="expand">
               <template slot-scope="props" >
 
@@ -123,11 +123,18 @@
             <el-table-column label="网址" prop="url"></el-table-column>
             <el-table-column label="采集数量" prop="scan_num"></el-table-column>
             <el-table-column label="同步数量" prop="sync_num"></el-table-column>
-            <el-table-column label="上次运行" prop="run_time"></el-table-column>
+            <el-table-column label="上次运行" prop="run_time">
+              <template slot-scope="scope">
+                
+                {{scope.row.run_time | time}}
+              </template>
+              
+
+            </el-table-column>
             <el-table-column  label="操作" width="200">
               <template slot-scope="scope">
-                <el-button  @click="wmTest(scope.row)" type="button" size="mini">采集</el-button>
-                <el-button  @click="scanDataCount(scope.row)" type="primary" size="mini">统计</el-button>
+                <el-button  @click="wmTest(scope.row)" type="primary" size="mini">采集</el-button>
+                <el-button  @click="scanDataCount(scope.row)" type="default" size="mini">统计</el-button>
               </template>
             </el-table-column>
 
@@ -143,11 +150,6 @@
       </el-form-item>
  -->
 
-      <el-form-item>
-        <el-button type="primary" @click="addWebsiteDialog.visible = true">新建网站</el-button>
-
-        <el-button @click="getTaskInfo">刷新</el-button>
-      </el-form-item>
 
 
     </el-form>
@@ -159,16 +161,16 @@
 
       <el-table :data="websiteScanDialog.row.rule_list" style="width: 100%">
         <el-table-column prop="url" label="网址" ></el-table-column>
-        <el-table-column prop="key" label="Key" width="150"></el-table-column>
-        <!-- <el-table-column prop="page" label="page" width="80"></el-table-column> -->
-        <!-- <el-table-column prop="page_times" label="p_times" width="80"></el-table-column> -->
+        <el-table-column prop="key" label="Key" width="350"></el-table-column>
+        <el-table-column prop="page" label="page" width="80"></el-table-column>
+        <el-table-column prop="page_times" label="p_times" width="80"></el-table-column>
         <el-table-column prop="page_end" label="p_end" width="80"></el-table-column>
         <el-table-column prop="page_run" label="p_run" width="80"></el-table-column>
         <el-table-column prop="status" label="ststus" width="80"></el-table-column>
 
         <el-table-column  label="操作" width="300">
           <template slot-scope="scope">
-            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row, true)"  type="primary" size="mini">运行</el-button>
+            <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row, true)"  :loading="btnLoading.websiteScan" type="primary" size="mini">运行</el-button>
             <el-button  @click="websiteRuleRun(websiteScanDialog.row, scope.row, false)"  type="default" size="mini">测试</el-button>
             <el-button  @click="websiteRuleRest(websiteScanDialog.row, scope.row)"  type="default" size="mini">重置</el-button>
           </template>
@@ -206,72 +208,67 @@
 
 <!-- Form -->
 
-<el-dialog title="添加网站" :visible.sync="addWebsiteDialog.visible">
-  <el-form :model="form" label-width="80px">
-    <el-form-item label="名称">
-      <el-input v-model="addWebsiteDialog.form.title" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="网址">
-      <el-input v-model="addWebsiteDialog.form.url" auto-complete="off"></el-input>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="addWebsiteDialog.visible = false">取 消</el-button>
-    <el-button type="primary" @click="addWebsite()">确 定</el-button>
-  </div>
-</el-dialog>
+    <el-dialog title="添加网站" :visible.sync="addWebsiteDialog.visible">
+      <el-form :model="form" label-width="80px">
+        <el-form-item label="名称">
+          <el-input v-model="addWebsiteDialog.form.title" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="网址">
+          <el-input v-model="addWebsiteDialog.form.url" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addWebsiteDialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="addWebsite()">确 定</el-button>
+      </div>
+    </el-dialog>
 
 
-<el-dialog title="增加规则" :visible.sync="addWebsiteRuleDialog.visible">
-  <el-form :model="form" label-width="80px">
-    <el-form-item label="网址">
-      <el-input v-model="addWebsiteRuleDialog.form.url" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="规则">
-      <el-col :span="8">
-        <el-input placeholder="key" v-model="addWebsiteRuleDialog.form.key" auto-complete="off"></el-input>
-      </el-col>
-      <el-col :span="8">
-        <el-input placeholder="page" v-model="addWebsiteRuleDialog.form.page" auto-complete="off"></el-input>
-      </el-col>
-      <el-col :span="8">
-        <el-input placeholder="page_times" v-model="addWebsiteRuleDialog.form.page_times" auto-complete="off"></el-input>
-      </el-col>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="addWebsiteRuleDialog.visible = false">取 消</el-button>
-    <el-button type="primary" @click="addWebsiteRule()">确 定</el-button>
-  </div>
-</el-dialog>
+    <el-dialog title="增加规则" :visible.sync="addWebsiteRuleDialog.visible">
+      <el-form :model="form" label-width="80px">
+        <el-form-item label="网址">
+          <el-input v-model="addWebsiteRuleDialog.form.url" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="规则">
+          <el-col :span="8">
+            <el-input placeholder="key" v-model="addWebsiteRuleDialog.form.key" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input placeholder="page" v-model="addWebsiteRuleDialog.form.page" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input placeholder="page_times" v-model="addWebsiteRuleDialog.form.page_times" auto-complete="off"></el-input>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addWebsiteRuleDialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="addWebsiteRule()">确 定</el-button>
+      </div>
+    </el-dialog>
 
-
-
-<el-dialog title="编辑规则" :visible.sync="updateWebsiteRuleDialog.visible">
-  <el-form :model="form" label-width="80px">
-    <el-form-item label="网址">
-      <el-input v-model="updateWebsiteRuleDialog.form.url" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="规则">
-      <el-col :span="8">
-        <el-input placeholder="key" v-model="updateWebsiteRuleDialog.form.key" auto-complete="off"></el-input>
-      </el-col>
-      <el-col :span="8">
-        <el-input placeholder="page" v-model="updateWebsiteRuleDialog.form.page" auto-complete="off"></el-input>
-      </el-col>
-      <el-col :span="8">
-        <el-input placeholder="page_times" v-model="updateWebsiteRuleDialog.form.page_times" auto-complete="off"></el-input>
-      </el-col>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="updateWebsiteRuleDialog.visible = false">取 消</el-button>
-    <el-button type="primary" @click="updateWebsiteRule()">确 定</el-button>
-  </div>
-</el-dialog>
-
-
-
+    <el-dialog title="编辑规则" :visible.sync="updateWebsiteRuleDialog.visible">
+      <el-form :model="form" label-width="80px">
+        <el-form-item label="网址">
+          <el-input v-model="updateWebsiteRuleDialog.form.url" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="规则">
+          <el-col :span="8">
+            <el-input placeholder="key" v-model="updateWebsiteRuleDialog.form.key" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input placeholder="page" v-model="updateWebsiteRuleDialog.form.page" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="8">
+            <el-input placeholder="page_times" v-model="updateWebsiteRuleDialog.form.page_times" auto-complete="off"></el-input>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateWebsiteRuleDialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="updateWebsiteRule()">确 定</el-button>
+      </div>
+    </el-dialog>
 
 
   </div>
@@ -292,6 +289,9 @@ import Qs    from 'qs'
         isLoading: false,
         websiteInfo: '',
 
+        btnLoading: {
+          websiteScan: false
+        },
         websiteModel: [
           {
             "find": "",
@@ -321,8 +321,8 @@ import Qs    from 'qs'
                 "type": "",
                 "method": [
                   {
-                    "find": "",
-                    "attr": ""
+                    "find": "img",
+                    "attr": "src"
                   }
                 ]
               },
@@ -331,8 +331,8 @@ import Qs    from 'qs'
                 "type": "",
                 "method": [
                   {
-                    "find": "",
-                    "attr": ""
+                    "find": "a",
+                    "attr": "href"
                   }
                 ]
               }
@@ -504,6 +504,9 @@ import Qs    from 'qs'
 
       //采集规则生成url
       websiteRuleRun(row, item, addData = false) {
+
+        this.btnLoading.websiteScan = true
+
         let {key, url, page, page_run, page_times, id, hash} = item
 
         page = page_run
@@ -541,7 +544,7 @@ import Qs    from 'qs'
         }
 
         let host = '//127.0.0.1:1112/scan'
-        host = '//47.88.52.88:1112/scan'
+        // host = '//47.88.52.88:1112/scan'
 
         axios.post(host, Qs.stringify(json), {
           headers: {
@@ -549,6 +552,8 @@ import Qs    from 'qs'
           },
         }).then(response => response.data)
           .then(data => {
+
+          this.btnLoading.websiteScan = false
           
           let {arr, oid, hash} = data
 
@@ -563,6 +568,8 @@ import Qs    from 'qs'
               if (price.indexOf('-') !== -1) {
                 nPrice = price.split('-')[0]
               }
+
+              nPrice = nPrice.replace('$', '').replace('USD', '').replace('Sales Price', '').replace('now', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
 
             } else if (typeof(price) == 'object') {
               price.forEach((item) => {
@@ -584,11 +591,13 @@ import Qs    from 'qs'
                 }
               })
 
+              nPrice = nPrice.replace('$', '').replace('USD', '').replace('Sales Price', '').replace('now', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
             } else {
               nPrice = price
             }
 
-            nPrice = nPrice.replace('$', '').replace('USD', '').replace('Sales Price', '').replace(/\ +/g,"").replace(/[\r\n\t]/g,"")
+
+
 
             item.price = nPrice
 
@@ -597,6 +606,8 @@ import Qs    from 'qs'
 
             item.brand = row.title
             item.wid   = row.id
+            item.oid   = oid
+            item.rid   = item.id
 
             if (url.indexOf('http://') == -1 && url.indexOf('https://') == -1) {
               item.url = row.url + url
@@ -617,18 +628,25 @@ import Qs    from 'qs'
 
           } else {
             arg.page_run = page + 1
-
           }
 
-          this.apiPut('website/rule/', id, arg).then((res) => {
-            this.handelResponse(res, (data) => {
-              this.getWebsiteInfo(row)
-            })
-          })
-
+          //采集并入库
           if (addData) {
             this.addScanData()
+            
+            this.apiPut('website/rule/', id, arg).then((res) => {
+              this.handelResponse(res, (data) => {
+                this.getWebsiteInfo(row)
+              })
+            })
+
+          } else {
+            //测试模式
+            item.hash = '-'
           }
+
+
+
 
         })
       },
@@ -704,6 +722,7 @@ import Qs    from 'qs'
           this.handelResponse(res, (data) => {
             _g.toastMsg('success', '添加成功')
             this.addWebsiteDialog.visible = false
+            this.getTaskInfo()
           })
         })
       },
