@@ -13,7 +13,9 @@
         <el-button @click="getTaskInfo">刷新</el-button>
         <el-button @click="addScanSync">同步</el-button>
 
-
+        <el-select v-model="scanServer.value">
+          <el-option v-for="item in scanServer.arr" :key="item.id" :label="item.label" :value="item.address + ':' + item.port">{{item.name}}</el-option>
+        </el-select>
       </el-form-item>
 
 
@@ -86,37 +88,12 @@
                       </el-row>
                     </div>
 
- 
-
-
-
                     <div class="p-l-20 bor-b-ccc bg-gra">
                       <el-button size="mini" type="primary" @click="saveWebsite(props.row)">保存</el-button>
                     </div>
-                  
-
                   </div>
                 </el-form>
- 
 
-      
-
-
-<!-- 
-                <el-form label-position="left" inline class="demo-table-expand">
-                  <el-form-item label="名称">
-                    <span>{{ props.row.title }}</span>
-                  </el-form-item>
-                  <el-form-item label="网址">
-                    <span>{{ props.row.url }}</span>
-                  </el-form-item>
-                  <el-form-item label="采集数量">
-                    <span>{{ props.row.id }}</span>
-                  </el-form-item>
-                  <el-form-item label="运行时间">
-                    <span>{{ props.row.run_time }}</span>
-                  </el-form-item>
-                </el-form> -->
               </template>
             </el-table-column>
             <el-table-column label="名称" prop="title"></el-table-column>
@@ -125,11 +102,9 @@
             <el-table-column label="同步数量" prop="sync_num"></el-table-column>
             <el-table-column label="上次运行" prop="run_time">
               <template slot-scope="scope">
-                
                 {{scope.row.run_time | time}}
               </template>
               
-
             </el-table-column>
             <el-table-column  label="操作" width="200">
               <template slot-scope="scope">
@@ -137,26 +112,12 @@
                 <el-button  @click="scanDataCount(scope.row)" type="default" size="mini">统计</el-button>
               </template>
             </el-table-column>
-
           </el-table>
-
-
-
         </div>
       </el-form-item>
-<!--       <el-form-item>
-        <el-button type="primary" @click="edit('form')" :loading="isLoading">提交</el-button>
-        <el-button @click="goback()">返回</el-button>
-      </el-form-item>
- -->
-
-
-
     </el-form>
 
-
-
-    <el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
+  <el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
     
 
       <el-table :data="websiteScanDialog.row.rule_list" style="width: 100%">
@@ -187,26 +148,13 @@
         <el-button  @click="addScanSync" type="button" size="mini">同步</el-button>
 
       </div>
-
-
-
     <scanArrList :arr="websiteScanDialog.data.arr"></scanArrList>
- 
 
-
-
-   
-
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="websiteScanDialog.visible = false">取 消</el-button>
-    <el-button type="primary" @click="addWebsite()">确 定</el-button>
-  </div>
-</el-dialog>
-
-
-
-
-<!-- Form -->
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="websiteScanDialog.visible = false">取 消</el-button>
+      <el-button type="primary" @click="addWebsite()">确 定</el-button>
+    </div>
+  </el-dialog>
 
     <el-dialog title="添加网站" :visible.sync="addWebsiteDialog.visible">
       <el-form :model="form" label-width="80px">
@@ -269,8 +217,6 @@
         <el-button type="primary" @click="updateWebsiteRule()">确 定</el-button>
       </div>
     </el-dialog>
-
-
   </div>
 </template>
 <script>
@@ -339,15 +285,12 @@ import Qs    from 'qs'
             ]
           }
         ],
-
-
         websiteScanDialog: {
           visible: false,
           data: {},
           row: {},
           loading: false,
         },
-
 
         addWebsiteDialog: {
           visible: false,
@@ -358,7 +301,6 @@ import Qs    from 'qs'
           },
           loading: false,
         },
-
         addWebsiteRuleDialog: {
           visible: false,
           form: {
@@ -370,15 +312,11 @@ import Qs    from 'qs'
           },
           loading: false,
         },
-
-
         updateWebsiteRuleDialog: {
           visible: false,
           form: {},
           loading: false,
         },
-
-
         form: {
           id: null,
           title: '',
@@ -386,9 +324,11 @@ import Qs    from 'qs'
           remark: '',
           rules: '',
           status: null
+        },
+        scanServer: {
+          arr: {},
+          value: '' 
         }
-      
-      
       }
     },
     components: {
@@ -397,12 +337,18 @@ import Qs    from 'qs'
 
     methods: {
 
+      fnGetScanServer(row) {
+        this.apiGet('admin/scan/server').then((res) => {
+          this.scanServer.arr = res.data
+        })
+      },
+
       wmAddNode() {
-
       },
+
       wmRemoveNode() {
-
       },
+
       wmAddChild(item) {
         item.push({
           "name": "",
@@ -416,6 +362,7 @@ import Qs    from 'qs'
       wmRemoveChild(item, index) {
         item.splice(index, 1)
       },
+
       wmAddMethod(item) {
         item.push({
           "find": "",
@@ -425,7 +372,6 @@ import Qs    from 'qs'
 
       wmRemoveMethod(item, index) {
         item.splice(index, 1)
-
       },
 
       scanDataCount(row) {
@@ -438,44 +384,36 @@ import Qs    from 'qs'
             this.getTaskInfo()
           })
         })
-
       },
 
       addScanData() {
-
         let json = {
           wid: this.websiteScanDialog.row.id,
           data: this.websiteScanDialog.data.arr
         }
-
         this.apiPost('scan/data', json).then((res) => {
           this.handelResponse(res, (data) => {
             _g.toastMsg('success', '入库' + data.add + '条')
             console.log(data)
           })
         })
-
       },
 
       addScanSync() {
-
         let json = {
           // data: this.websiteScanDialog.data.arr
         }
 
         this.apiPost('scan/sync', json).then((res) => {
           this.handelResponse(res, (data) => {
-
             _g.toastMsg('success', '同步' + data.add + '条')
           })
         })
-
       },
 
       //采集测试
       wmTest(row) {
         this.websiteScanDialog.visible = true
-
         this.apiGet('website/' + row.id).then((res) => {
           this.handelResponse(res, (data) => {
             row.rule_list = data.rule_list
@@ -483,7 +421,6 @@ import Qs    from 'qs'
           })
         })
       },
-
       //重置采集规则
       websiteRuleRest(row, item) {
         let {id, page} = item
@@ -492,7 +429,6 @@ import Qs    from 'qs'
           hash: 0,
           page_run: page
         }
-
         this.apiPut('website/rule/', id, arg).then((res) => {
           this.handelResponse(res, (data) => {
             _g.toastMsg('success', '已重置')
@@ -506,7 +442,6 @@ import Qs    from 'qs'
       websiteRuleRun(row, item, addData = false) {
 
         this.btnLoading.websiteScan = true
-
         let {key, url, page, page_run, page_times, id, hash} = item
 
         page = page_run
@@ -514,7 +449,6 @@ import Qs    from 'qs'
           let __xd_page__ = page * page_times
           url = url.replace('${page}', '${__xd_page__}')
         }
-
         let nItem = {
           id,
           page,
@@ -543,8 +477,7 @@ import Qs    from 'qs'
           oid
         }
 
-        let host = '//127.0.0.1:1112/scan'
-        // host = '//47.88.52.88:1112/scan'
+        let host = '//' + this.scanServer.value + '/scan'
 
         axios.post(host, Qs.stringify(json), {
           headers: {
@@ -595,8 +528,6 @@ import Qs    from 'qs'
             } else {
               nPrice = price
             }
-
-
 
 
             item.price = nPrice
@@ -748,6 +679,7 @@ import Qs    from 'qs'
     },
     created() {
       this.getTaskInfo()
+      this.fnGetScanServer()
     },
     mixins: [http, fomrMixin]
   }
