@@ -1,16 +1,16 @@
 <template>
-	<el-dialog ref="dialog" custom-class="w-400 h-300" title="修改密码">
-		<div class="ovf-auto">
-			<el-form ref="form" :model="form" :rules="rules" label-width="80px">
-				<el-form-item label="旧密码" prop="old_pwd">
-					<el-input v-model.trim="form.old_pwd"></el-input>
-				</el-form-item>
-				<el-form-item label="新密码" prop="new_pwd">
-					<el-input v-model.trim="form.new_pwd"></el-input>
-				</el-form-item>
-			</el-form>
-		</div>
-		<div class="p-t-20">
+	<el-dialog ref="dialog" :visible.sync="visible" title="修改密码">
+	 
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="旧密码" prop="old_pwd">
+        <el-input v-model.trim="form.old_pwd"></el-input>
+      </el-form-item>
+      <el-form-item label="新密码" prop="new_pwd">
+        <el-input v-model.trim="form.new_pwd"></el-input>
+      </el-form-item>
+    </el-form>
+ 
+		<div slot="footer" class="dialog-footer">
 			<el-button type="primary" class="fl m-l-20" :disabled="disable" @click="submit()">提交</el-button>
 		</div>
 	</el-dialog>
@@ -19,11 +19,12 @@
 
 </style>
 <script>
-  import http from '../../assets/js/http'
+  import http from '@/assets/js/http'
 
   export default {
     data() {
       return {
+        visible: false,
         disable: false,
         form: {
           auth_key: '',
@@ -44,10 +45,13 @@
     },
     methods: {
       open() {
-        this.$refs.dialog.open()
+        console.log('s')
+        this.visible = true
+        // this.$refs.dialog.open()
       },
       close() {
-        this.$refs.dialog.close()
+        this.visible = false
+        // this.$refs.dialog.close()
       },
       submit() {
         this.$refs.form.validate((pass) => {

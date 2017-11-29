@@ -25,7 +25,6 @@
 			</el-col>
 		</el-col>
 		<el-col :span="24" class="panel-center">
-			<!--<el-col :span="4">-->
 			<aside class="w-180 ovf-hd" v-show="!showLeftMenu">
 				<leftMenu :menuData="menuData" :menu="menu" ref="leftMenu"></leftMenu>
 			</aside>
@@ -39,7 +38,6 @@
 				</div>
 			</section>
 		</el-col>
-
 		<changePwd ref="changePwd"></changePwd>
 
 	</el-row>
@@ -118,9 +116,9 @@
 	}
 </style>
 <script>
-  import leftMenu from './Common/leftMenu.vue'
-  import changePwd from './Account/changePwd.vue'
-  import http from '../assets/js/http'
+  import leftMenu from '@/components/Common/leftMenu.vue'
+  import changePwd from '@/components/Account/changePwd.vue'
+  import http from '@/assets/js/http'
 
   export default {
     data() {

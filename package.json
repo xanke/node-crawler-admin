@@ -1,8 +1,8 @@
 {
-  "name": "nx",
-  "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "",
+  "name": "node-crawler",
+  "version": "0.2.0",
+  "description": "Node-crawler-admin",
+  "author": "xank@qq.com",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
