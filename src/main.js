@@ -11,7 +11,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import routes from './routes'
 import VueRouter from 'vue-router'
-import store from './vuex/store'
+// import store from './vuex/store'
+import store from './store'
 import filter from './assets/js/filter'
 import _g from './assets/js/global'
 import NProgress from 'nprogress'
@@ -33,8 +34,8 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const hideLeft = to.meta.hideLeft
-  store.dispatch('showLeftMenu', hideLeft)
-  store.dispatch('showLoading', true)
+  // store.dispatch('showLeftMenu', hideLeft)
+  // store.dispatch('showLoading', true)
   NProgress.start()
   next()
 })
@@ -45,6 +46,7 @@ router.afterEach(transition => {
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
+
 
 window.router = router
 window.store = store
