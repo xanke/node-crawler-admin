@@ -115,122 +115,124 @@
 }
 </style>
 <script>
-import leftMenu from "@/components/Common/leftMenu.vue";
-import changePwd from "@/components/Account/changePwd.vue";
-import http from "@/assets/js/http";
+import leftMenu from '@/components/Common/leftMenu.vue'
+import changePwd from '@/components/Account/changePwd.vue'
+import http from '@/assets/js/http'
 
 export default {
   data() {
     return {
-      username: "",
+      username: '',
       topMenu: [],
       childMenu: [],
       menuData: [],
       hasChildMenu: false,
       menu: null,
       module: null,
-      img: "",
-      title: "",
+      img: '',
+      title: '',
       logo_type: null
-    };
+    }
   },
   methods: {
     logout() {
-      this.$confirm("确认退出吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消"
+      this.$confirm('确认退出吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
       })
         .then(() => {
-          _g.openGlobalLoading();
+          _g.openGlobalLoading()
           let data = {
-            authkey: Lockr.get("authKey"),
-            sessionId: Lockr.get("sessionId")
-          };
-          this.apiPost("admin/base/logout", data).then(res => {
-            _g.closeGlobalLoading();
+            authkey: Lockr.get('authKey'),
+            sessionId: Lockr.get('sessionId')
+          }
+          this.apiPost('admin/base/logout', data).then(res => {
+            _g.closeGlobalLoading()
             this.handelResponse(res, data => {
-              Lockr.rm("menus");
-              Lockr.rm("authKey");
-              Lockr.rm("rememberKey");
-              Lockr.rm("authList");
-              Lockr.rm("userInfo");
-              Lockr.rm("sessionId");
-              Cookies.remove("rememberPwd");
-              _g.toastMsg("success", "退出成功");
+              Lockr.rm('menus')
+              Lockr.rm('authKey')
+              Lockr.rm('rememberKey')
+              Lockr.rm('authList')
+              Lockr.rm('userInfo')
+              Lockr.rm('sessionId')
+              Cookies.remove('rememberPwd')
+              _g.toastMsg('success', '退出成功')
               setTimeout(() => {
-                router.replace("/");
-              }, 1500);
-            });
-          });
+                router.replace('/')
+              }, 1500)
+            })
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     switchTopMenu(item) {
       if (!item.child) {
-        router.push(item.url);
+        router.push(item.url)
       } else {
-        router.push(item.child[0].child[0].url);
+        router.push(item.child[0].child[0].url)
       }
     },
     handleMenu(val) {
       switch (val) {
-        case "logout":
-          this.logout();
-          break;
-        case "changePwd":
-          this.changePwd();
-          break;
+        case 'logout':
+          this.logout()
+          break
+        case 'changePwd':
+          this.changePwd()
+          break
       }
     },
     changePwd() {
-      this.$refs.changePwd.open();
+      this.$refs.changePwd.open()
     },
     getTitleAndLogo() {
-      this.apiPost("admin/base/getConfigs").then(res => {
+      this.apiPost('admin/base/getConfigs').then(res => {
         this.handelResponse(res, data => {
-          document.title = data.SYSTEM_NAME;
-          this.logo_type = data.LOGO_TYPE;
-          this.title = data.SYSTEM_NAME;
-          this.img = window.HOST + data.SYSTEM_LOGO;
-        });
-      });
+          document.title = data.SYSTEM_NAME
+          this.logo_type = data.LOGO_TYPE
+          this.title = data.SYSTEM_NAME
+          this.img = window.HOST + data.SYSTEM_LOGO
+        })
+      })
     },
     getUsername() {
-      this.username = Lockr.get("userInfo").username;
+      this.username = Lockr.get('userInfo').username
     }
   },
   created() {
-    this.getTitleAndLogo();
-    let authKey = Lockr.get("authKey");
-    let sessionId = Lockr.get("sessionId");
+    this.getTitleAndLogo()
+    let authKey = Lockr.get('authKey')
+    let sessionId = Lockr.get('sessionId')
     if (!authKey || !sessionId) {
-      _g.toastMsg("warning", "您尚未登录");
+      _g.toastMsg('warning', '您尚未登录')
       setTimeout(() => {
-        router.replace("/");
-      }, 1500);
-      return;
+        router.replace('/')
+      }, 1500)
+      return
     }
-    this.getUsername();
-    let menus = Lockr.get("menus");
-    this.menu = this.$route.meta.menu;
-    this.module = this.$route.meta.module;
-    this.topMenu = menus;
+    this.getUsername()
+    let menus = Lockr.get('menus')
+    this.menu = this.$route.meta.menu
+    this.module = this.$route.meta.module
+    this.topMenu = menus
     _(menus).forEach(res => {
       if (res.module == this.module) {
-        this.menuData = res.child;
-        res.selected = true;
+        this.menuData = res.child
+        res.selected = true
       } else {
-        res.selected = false;
+        res.selected = false
       }
-    });
+    })
+    console.log(store) 
   },
   computed: {
     routerShow() {
-      return store.state.routerShow;
+      return store.state.routerShow
     },
     showLeftMenu() {
-      this.hasChildMenu = store.state.showLeftMenu;
-      return store.state.showLeftMenu;
+      // this.hasChildMenu = store.state.showLeftMenu
+      // return store.state.showLeftMenu
+      return false
     }
   },
   components: {
@@ -241,17 +243,17 @@ export default {
     $route(to, from) {
       _(this.topMenu).forEach(res => {
         if (res.module == to.meta.module) {
-          res.selected = true;
+          res.selected = true
           if (!to.meta.hideLeft) {
-            this.menu = to.meta.menu;
-            this.menuData = res.child;
+            this.menu = to.meta.menu
+            this.menuData = res.child
           }
         } else {
-          res.selected = false;
+          res.selected = false
         }
-      });
+      })
     }
   },
   mixins: [http]
-};
+}
 </script>

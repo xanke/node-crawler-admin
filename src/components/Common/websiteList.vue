@@ -14,7 +14,11 @@ export default {
   computed: {},
   components: {},
   filters: {},
-  methods: {},
-  created() {}
+  methods: {
+    
+  },
+  created() {
+
+  }
 }
 </script>

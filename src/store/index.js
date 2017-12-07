@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 
 // import base from './modules/base'
 import task from './modules/task'
+import website from './modules/website'
+
 import state from './state'
 import mutations from './mutations'
 import getters from './getters'
@@ -17,6 +19,7 @@ export default new Vuex.Store({
   actions,
   modules: {
     // base,
-    task
+    task,
+    website
   }
 })

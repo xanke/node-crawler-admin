@@ -12,97 +12,120 @@
           <el-option v-for="item in scanServer.arr" :key="item.id" :label="item.label" :value="item.address + ':' + item.port">{{item.name}}</el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="网站">
-        <div class="bor-gray  ovf-y-auto bor-ra-5 bg-wh">
-          <el-table @expand-change="getWebsiteInfo" :data="form.website_list"  height="800">
-            <el-table-column type="expand">
-              <template slot-scope="props" >
-                <el-form ref="form" label-width="80px">
-                  <div class="bor-gray  ovf-y-auto bor-ra-5 bg-wh" style="overflow: hidden;">
-                      <el-row :gutter="10">
-                        <el-col :span="6">
-                          <el-form-item label="名称">
-                            <el-input size="mini" v-model="props.row.title"></el-input>
-                          </el-form-item>
-                        </el-col>
-                      </el-row>
-                    <div class="bor-b-ccc bg-gra p-l-10 p-r-10" :key="index" v-for="(item, index) in props.row.model">
-                      <el-row :gutter="10">
-                        <el-col :span="6">
-                          <el-form-item label="节点名称">
-                            <el-input size="mini" v-model="item.find"></el-input>
-                          </el-form-item>
-                        </el-col>
-                      </el-row>
-                      <div :key="cIndex" v-for="(cItem, cIndex) in item.child">
-                        <el-row :gutter="10">
-                          <el-col :span="8">
-                            <el-form-item label="元素">
-                              <el-input size="mini" v-model="cItem.name"></el-input>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :span="14">
-                            <el-select size="mini" v-model="cItem.type" placeholder="方法类型">
-                              <el-option value="" label="自动"></el-option>
-                              <el-option value="or" label="or"></el-option>
-                              <el-option value="list" label="list"></el-option>
-                            </el-select>
-                            <el-button size="mini" type="default" @click="wmRemoveChild(item.child, cIndex)">删除</el-button>
-                          </el-col>
-                        </el-row>
-                        <div :key="mIndex" v-for="(mItem, mIndex) in cItem.method">
-                          <el-row :gutter="10">
-                            <el-col :span="8">
-                              <el-form-item label="Find">
-                                <el-input size="mini" v-model="mItem.find"></el-input>
-                              </el-form-item>
-                            </el-col>
-                            <el-col :span="4">
-                              <el-input size="mini" v-model="mItem.attr" placeholder="attr"></el-input>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-button size="mini" type="default" @click="wmRemoveMethod(cItem.method, mIndex)">删除</el-button>
-                            </el-col>
-                          </el-row>
-                        </div>
-                        <el-row :gutter="10">
-                          <el-form-item>
-                            <el-button size="mini" type="primary" @click="wmAddMethod(cItem.method)">增加方法</el-button>
-                          </el-form-item>
-                        </el-row>
-                      </div>
-                      <el-row :gutter="10">
-                        <el-form-item>
-                          <el-button size="mini" type="primary" @click="wmAddChild(item.child)">增加元素</el-button>
-                        </el-form-item>
-                      </el-row>
-                    </div>
-                    <div class="p-l-20 bor-b-ccc bg-gra">
-                      <el-button size="mini" type="primary" @click="saveWebsite(props.row)">保存</el-button>
-                    </div>
-                  </div>
-                </el-form>
-              </template>
-            </el-table-column>
-            <el-table-column label="名称" prop="title"></el-table-column>
-            <el-table-column label="网址" prop="url"></el-table-column>
-            <el-table-column label="采集数量" prop="scan_num"></el-table-column>
-            <el-table-column label="同步数量" prop="sync_num"></el-table-column>
-            <el-table-column label="上次运行" prop="run_time">
-              <template slot-scope="scope">
-                {{scope.row.run_time | time}}
-              </template>
-            </el-table-column>
-            <el-table-column  label="操作" width="200">
-              <template slot-scope="scope">
-                <el-button  @click="wmTest(scope.row)" type="primary" size="mini">采集</el-button>
-                <el-button  @click="scanDataCount(scope.row)" type="default" size="mini">统计</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-form-item>
     </el-form>
+
+    <!-- <el-container>
+      <el-aside width="300px" style="background-color: rgb(238, 241, 246)" >
+        <el-menu :default-openeds="['a']" @select="getWebsiteInfo">
+          <el-submenu index="a">
+            <template slot="title"><i class="el-icon-message"></i>导航一</template>
+            <el-menu-item-group>
+              <el-menu-item :index="'web-' + item.id" :key="index" v-for="(item, index) in form.website_list">{{item.url}}</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
+      
+      <el-container>
+   
+        <el-main>
+      
+        </el-main>
+      </el-container>
+    </el-container> -->
+
+    <div class="bor-gray ovf-y-auto bor-ra-5 bg-wh">
+      <el-table @expand-change="getScanData" :data="form.website_list" height="800">
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <!-- {{scanData.arr}} -->
+            <scanArrList :arr="scanData.arr"></scanArrList>
+            <!-- <el-form ref="form" label-width="80px">
+              <div class="bor-gray  ovf-y-auto bor-ra-5 bg-wh" style="overflow: hidden;">
+                  <el-row :gutter="10">
+                    <el-col :span="6">
+                      <el-form-item label="名称">
+                        <el-input size="mini" v-model="props.row.title"></el-input>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                <div class="bor-b-ccc bg-gra p-l-10 p-r-10" :key="index" v-for="(item, index) in props.row.model">
+                  <el-row :gutter="10">
+                    <el-col :span="6">
+                      <el-form-item label="节点名称">
+                        <el-input size="mini" v-model="item.find"></el-input>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <div :key="cIndex" v-for="(cItem, cIndex) in item.child">
+                    <el-row :gutter="10">
+                      <el-col :span="8">
+                        <el-form-item label="元素">
+                          <el-input size="mini" v-model="cItem.name"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="14">
+                        <el-select size="mini" v-model="cItem.type" placeholder="方法类型">
+                          <el-option value="" label="自动"></el-option>
+                          <el-option value="or" label="or"></el-option>
+                          <el-option value="list" label="list"></el-option>
+                        </el-select>
+                        <el-button size="mini" type="default" @click="wmRemoveChild(item.child, cIndex)">删除</el-button>
+                      </el-col>
+                    </el-row>
+                    <div :key="mIndex" v-for="(mItem, mIndex) in cItem.method">
+                      <el-row :gutter="10">
+                        <el-col :span="8">
+                          <el-form-item label="Find">
+                            <el-input size="mini" v-model="mItem.find"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="4">
+                          <el-input size="mini" v-model="mItem.attr" placeholder="attr"></el-input>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-button size="mini" type="default" @click="wmRemoveMethod(cItem.method, mIndex)">删除</el-button>
+                        </el-col>
+                      </el-row>
+                    </div>
+                    <el-row :gutter="10">
+                      <el-form-item>
+                        <el-button size="mini" type="primary" @click="wmAddMethod(cItem.method)">增加方法</el-button>
+                      </el-form-item>
+                    </el-row>
+                  </div>
+                  <el-row :gutter="10">
+                    <el-form-item>
+                      <el-button size="mini" type="primary" @click="wmAddChild(item.child)">增加元素</el-button>
+                    </el-form-item>
+                  </el-row>
+                </div>
+                <div class="p-l-20 bor-b-ccc bg-gra">
+                  <el-button size="mini" type="primary" @click="saveWebsite(props.row)">保存</el-button>
+                </div>
+              </div>
+            </el-form> -->
+            
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" prop="title"></el-table-column>
+        <el-table-column label="网址" prop="url"></el-table-column>
+        <el-table-column label="采集数量" prop="scan_num"></el-table-column>
+        <el-table-column label="同步数量" prop="sync_num"></el-table-column>
+        <el-table-column label="上次运行" prop="run_time">
+          <template slot-scope="scope">
+            {{scope.row.run_time | time}}
+          </template>
+        </el-table-column>
+        <el-table-column  label="操作" width="200">
+          <template slot-scope="scope">
+            <el-button  @click="wmTest(scope.row)" type="primary" size="mini">采集</el-button>
+            <el-button  @click="scanDataCount(scope.row)" type="default" size="mini">统计</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
     <el-dialog :fullscreen="true" title="开始采集" :visible.sync="websiteScanDialog.visible">
       <el-table :data="websiteScanDialog.row.rule_list" style="width: 100%">
         <el-table-column prop="url" label="网址" ></el-table-column>
@@ -186,7 +209,7 @@ import http from '@/assets/js/http'
 import fomrMixin from '@/assets/js/form_com'
 import websiteEdit from '@/components/task/websiteEdit'
 import Qs from 'qs'
-import {uuid} from '@/until'
+import { uuid } from '@/until'
 
 export default {
   components: {
@@ -197,7 +220,9 @@ export default {
     return {
       isLoading: false,
       websiteInfo: '',
-
+      scanData: {
+        arr: []
+      },
       btnLoading: {
         websiteScan: false
       },
@@ -415,12 +440,9 @@ export default {
         .then(response => response.data)
         .then(data => {
           this.btnLoading.websiteScan = false
-
           let { arr, oid, hash } = data
-
           arr.forEach(item => {
             let { price, url } = item
-
             let nPrice = ''
             if (typeof price == 'string') {
               nPrice = price
@@ -459,6 +481,7 @@ export default {
               nPrice = nPrice
                 .replace('$', '')
                 .replace('USD', '')
+                .replace('Price', '')
                 .replace('Sales Price', '')
                 .replace('now', '')
                 .replace(/\ +/g, '')
@@ -550,6 +573,17 @@ export default {
         })
       })
     },
+    //获取采集数据
+    getScanData(row) {
+      let arg = {
+        wid: row.id
+      }
+      this.apiGet('scan/data', arg).then(res => {
+        this.handelResponse(res, data => {
+          this.scanData.arr = row
+        })
+      })
+    },
     openAddWebsite() {
       this.$refs.websiteEdit.open()
     },
@@ -589,6 +623,7 @@ export default {
   created() {
     this.getTaskInfo()
     this.fnGetScanServer()
+    this.$store.dispatch('getTaskInfo', this.$route.params.id)
   },
   mixins: [http, fomrMixin]
 }

@@ -47,7 +47,6 @@ router.afterEach(transition => {
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 
-
 window.router = router
 window.store = store
 window.HOST = HOST
@@ -69,5 +68,5 @@ new Vue({
   router,
   store,
   components: { App }
-// render: h => h(Login)
+  // render: h => h(Login)
 }).$mount('#app')
