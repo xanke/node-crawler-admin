@@ -12,9 +12,8 @@ const actions = {
     http.apiGet('task/' + id).then(res => {
       http.handelResponse(res, data => {
 
-        console.log(data)
-        () => commit(types.GET_TASKINFO, { data })
-
+        // console.log(data)
+        // () => commit(types.GET_TASKINFO, { data })
         // data.website_list.forEach(item => {
         //   if (!item.model) {
         //     item.model = this.websiteModel
