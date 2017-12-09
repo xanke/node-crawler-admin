@@ -223,7 +223,6 @@ export default {
         res.selected = false
       }
     })
-    console.log(store) 
   },
   computed: {
     routerShow() {
