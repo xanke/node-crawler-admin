@@ -8,10 +8,10 @@
       <el-form-item prop="password">
         <el-input type="password" v-model="form.password" auto-complete="off" placeholder="密码"></el-input>
       </el-form-item>
-      <el-form-item v-show="requireVerify" prop="verifyCode">
+      <!-- <el-form-item v-show="requireVerify" prop="verifyCode">
         <el-input type="text" v-model="form.verifyCode" auto-complete="off" placeholder="验证码" class="w-150"></el-input>
         <img :src="verifyUrl" @click="refreshVerify()" class="verify-pos"/>
-      </el-form-item>
+      </el-form-item> -->
       <el-checkbox v-model="checked" style="margin:0px 0px 35px 0px;">记住密码</el-checkbox>
       <el-form-item style="width:100%;">
         <el-button type="primary" style="width:100%;" v-loading="loading" @click.native.prevent="handleSubmit2('form')">登录</el-button>

@@ -8,7 +8,7 @@
         <el-button type="primary" @click="openAddWebsite">增加网站</el-button>
         <el-button @click="getTaskInfo">刷新</el-button>
         <el-button @click="addScanSync">同步</el-button>
-        <el-select v-model="scanServer.value">
+        <el-select placeholder="请选择服务器" v-model="scanServer.value">
           <el-option v-for="item in scanServer.arr" :key="item.id" :label="item.label" :value="item.address + ':' + item.port">{{item.name}}</el-option>
         </el-select>
       </el-form-item>
@@ -33,9 +33,8 @@
         </el-main>
       </el-container>
     </el-container> -->
-
     <div class="bor-gray ovf-y-auto bor-ra-5 bg-wh">
-      <el-table @expand-change="getScanData" :data="form.website_list" height="800">
+      <el-table @expand-change="getScanData" :data="websiteList" height="800">
         <el-table-column type="expand">
           <template slot-scope="props">
             <!-- {{scanData.arr}} -->
@@ -210,6 +209,7 @@ import fomrMixin from '@/assets/js/form_com'
 import websiteEdit from '@/components/task/websiteEdit'
 import Qs from 'qs'
 import { uuid } from '@/until'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -310,6 +310,9 @@ export default {
       }
     }
   },
+  computed: mapState({
+    websiteList: state => state.website.list,
+  }),
 
   methods: {
     fnGetScanServer(row) {
@@ -319,7 +322,6 @@ export default {
     },
     wmAddNode() {},
     wmRemoveNode() {},
-
     wmAddChild(item) {
       item.push({
         name: '',
@@ -603,27 +605,12 @@ export default {
     },
     //获取任务
     getTaskInfo() {
-      this.form.id = this.$route.params.id
-      this.apiGet('task/' + this.form.id).then(res => {
-        this.handelResponse(res, data => {
-          data.website_list.forEach(item => {
-            if (!item.model) {
-              item.model = this.websiteModel
-            } else {
-              item.model = JSON.parse(item.model)
-            }
-            item.rule_list = []
-            item.scan_data = []
-          })
-          this.form = data
-        })
-      })
+      this.$store.dispatch('getTaskInfo', this.$route.params.id)
     }
   },
   created() {
     this.getTaskInfo()
     this.fnGetScanServer()
-    this.$store.dispatch('getTaskInfo', this.$route.params.id)
   },
   mixins: [http, fomrMixin]
 }
