@@ -311,7 +311,7 @@ export default {
     }
   },
   computed: mapState({
-    websiteList: state => state.website.list,
+    websiteList: state => state.task.website_list,
   }),
 
   methods: {

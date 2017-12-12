@@ -1,34 +1,35 @@
 // import axios from '../axios'
-import http from '@/assets/js/http'
+import http_m from '@/assets/js/http'
+
+var http = http_m.methods
 
 const state = {
-  info: {}
+  info: {},
+  website_list: []
 }
 
 const actions = {
-  // getTaskInfo({ commit, dispatch }, res) {
-
-  //   http.apiGet('task/' + this.form.id).then(res => {
-  //     this.handelResponse(res, data => {
-  //       data.website_list.forEach(item => {
-  //         if (!item.model) {
-  //           item.model = this.websiteModel
-  //         } else {
-  //           item.model = JSON.parse(item.model)
-  //         }
-  //         item.rule_list = []
-  //         item.scan_data = []
-  //       })
-  //       this.form = data
-  //     })
-  //   })
-
-
-  // }
+  getTaskInfo({ commit, dispatch }, id) {
+    http.apiGet('task/' + id).then(res => {
+      http.handelResponse(res, data => {
+        commit('setTaskWebsiteList', data)
+      })
+    })
+  }
 }
 
 const mutations = {
-  addUserInfo(state, { data }) {
+  setTaskWebsiteList(state, data) {
+    data.website_list.forEach(item => {
+      if (!item.model) {
+        item.model = this.websiteModel
+      } else {
+        item.model = JSON.parse(item.model)
+      }
+      item.rule_list = []
+      item.scan_data = []
+    })
+    state.website_list = data.website_list
   }
 }
 
