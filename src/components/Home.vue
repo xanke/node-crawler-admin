@@ -1,5 +1,13 @@
 <template>
-	<el-row class="panel m-w-1280">
+
+	<div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
+		<sidebar class="sidebar-container"></sidebar>
+		<div class="main-container">
+			<navbar></navbar>
+			<app-main></app-main>
+		</div>
+	</div>
+	<!-- <el-row class="panel m-w-1280">
 		<el-col :span="24" class="panel-top">
 			<el-col :span="4">
         <template v-if="logo_type == '1'">
@@ -25,9 +33,9 @@
 			</el-col>
 		</el-col>
 		<el-col :span="24" class="panel-center">
-			<!-- <aside class="w-180 ovf-hd" v-show="!showLeftMenu">
+			<aside class="w-180 ovf-hd" v-show="!showLeftMenu">
 				<leftMenu :menuData="menuData" :menu="menu" ref="leftMenu"></leftMenu>
-			</aside> -->
+			</aside>
 			<section class="panel-c-c" :class="{'hide-leftMenu': hasChildMenu}">
 				<div class="grid-content bg-purple-light">
 					<el-col :span="24">
@@ -39,7 +47,7 @@
 			</section>
 		</el-col>
 		<changePwd ref="changePwd"></changePwd>
-	</el-row>
+	</el-row> -->
 </template>
 <style>
 .fade-enter-active,
@@ -118,8 +126,16 @@
 import leftMenu from '@/components/Common/leftMenu.vue'
 import changePwd from '@/components/Account/changePwd.vue'
 import http from '@/assets/js/http'
+import { Navbar, Sidebar, AppMain } from '@/views/layout'
 
 export default {
+  components: {
+    leftMenu,
+    changePwd,
+    Navbar,
+    Sidebar,
+    AppMain
+  },
   data() {
     return {
       username: '',
@@ -228,15 +244,9 @@ export default {
     routerShow() {
       return store.state.routerShow
     },
-    showLeftMenu() {
-      // this.hasChildMenu = store.state.showLeftMenu
-      // return store.state.showLeftMenu
-      return false
+    sidebar() {
+      return this.$store.state.app.sidebar
     }
-  },
-  components: {
-    leftMenu,
-    changePwd
   },
   watch: {
     $route(to, from) {
