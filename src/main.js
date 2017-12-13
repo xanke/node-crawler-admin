@@ -9,7 +9,7 @@ import moment from 'moment'
 import ElementUI from 'element-ui'
 
 import 'element-ui/lib/theme-chalk/index.css'
-import routes from './routes'
+import router from './router'
 import VueRouter from 'vue-router'
 // import store from './vuex/store'
 import store from './store'
@@ -26,23 +26,23 @@ axios.defaults.headers.authKey = Lockr.get('authKey')
 axios.defaults.headers.sessionId = Lockr.get('sessionId')
 axios.defaults.headers['Content-Type'] = 'application/json'
 
-const router = new VueRouter({
-  // mode: 'history',
-  // base: __dirname,
-  routes
-})
+// const router = new VueRouter({
+//   // mode: 'history',
+//   // base: __dirname,
+//   routers
+// })
 
-router.beforeEach((to, from, next) => {
-  const hideLeft = to.meta.hideLeft
-  // store.dispatch('showLeftMenu', hideLeft)
-  // store.dispatch('showLoading', true)
-  NProgress.start()
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   const hideLeft = to.meta.hideLeft
+//   // store.dispatch('showLeftMenu', hideLeft)
+//   // store.dispatch('showLoading', true)
+//   NProgress.start()
+//   next()
+// })
 
-router.afterEach(transition => {
-  NProgress.done()
-})
+// router.afterEach(transition => {
+//   NProgress.done()
+// })
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
