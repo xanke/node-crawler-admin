@@ -4,7 +4,6 @@
     </el-menu>
 </template>
 
-
 <script>
 import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
@@ -18,6 +17,9 @@ export default {
     isCollapse() {
       return !this.sidebar.opened
     }
+  },
+  created() {
+    console.log(this)
   }
 }
 </script>

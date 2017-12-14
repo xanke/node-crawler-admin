@@ -60,67 +60,6 @@
   opacity: 0;
 }
 
-.panel {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  width: 100%;
-}
-
-.panel-top {
-  height: 60px;
-  line-height: 60px;
-  background: #1f2d3d;
-  color: #c0ccda;
-}
-
-.panel-center {
-  background: #324057;
-  position: absolute;
-  top: 60px;
-  bottom: 0px;
-  overflow: hidden;
-}
-
-.panel-c-c {
-  background: #f1f2f7;
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  overflow-y: scroll;
-  padding: 20px;
-}
-
-.logout {
-  background: url(../assets/images/logout_36.png);
-  background-size: contain;
-  width: 20px;
-  height: 20px;
-  float: left;
-}
-
-.logo {
-  width: 150px;
-  float: left;
-  margin: 10px 10px 10px 18px;
-}
-
-.tip-logout {
-  float: right;
-  margin-right: 20px;
-  padding-top: 5px;
-  cursor: pointer;
-}
-
-.admin {
-  color: #c0ccda;
-  text-align: center;
-}
-.hide-leftMenu {
-  left: 0px;
-}
 </style>
 <script>
 import leftMenu from '@/components/Common/leftMenu.vue'
