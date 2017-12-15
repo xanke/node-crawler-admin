@@ -1,236 +1,51 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// in development env not use Lazy Loading,because Lazy Loading too many pages will cause webpack hot update too slow.so only in production use Lazy Loading
-// const _import = require('./_import_' + process.env.NODE_ENV)
+const _import = require('./_import_' + process.env.NODE_ENV)
+// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
+// detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
+
 Vue.use(Router)
 
+/* Layout */
 import Layout from '../views/layout/Layout'
 
-import Login from '@/components/Account/Login.vue'
-import refresh from '@/components/refresh.vue'
-import Home from '@/components/Home.vue'
-import menuList from '@/components/Administrative/system/menu/list.vue'
-import menuAdd from '@/components/Administrative/system/menu/add.vue'
-import menuEdit from '@/components/Administrative/system/menu/edit.vue'
-import systemConfig from '@/components/Administrative/system/config/add.vue'
-import ruleList from '@/components/Administrative/system/rule/list.vue'
-import ruleAdd from '@/components/Administrative/system/rule/add.vue'
-import ruleEdit from '@/components/Administrative/system/rule/edit.vue'
-import positionList from '@/components/Administrative/structures/position/list.vue'
-import positionAdd from '@/components/Administrative/structures/position/add.vue'
-import positionEdit from '@/components/Administrative/structures/position/edit.vue'
-import structuresList from '@/components/Administrative/structures/structures/list.vue'
-import structuresAdd from '@/components/Administrative/structures/structures/add.vue'
-import structuresEdit from '@/components/Administrative/structures/structures/edit.vue'
-import groupsList from '@/components/Administrative/structures/groups/list.vue'
-import groupsAdd from '@/components/Administrative/structures/groups/add.vue'
-import groupsEdit from '@/components/Administrative/structures/groups/edit.vue'
-import usersList from '@/components/Administrative/personnel/users/list.vue'
-import usersAdd from '@/components/Administrative/personnel/users/add.vue'
-import usersEdit from '@/components/Administrative/personnel/users/edit.vue'
-
-import tasksList from '@/views/tasks/list.vue'
-import tasksAdd from '@/views/tasks/add.vue'
-import tasksEdit from '@/views/tasks/edit.vue'
-
 /**
- * meta参数解析
- * hideLeft: 是否隐藏左侧菜单，单页菜单为true
- * module: 菜单所属模块
- * menu: 所属菜单，用于判断三级菜单是否显示高亮，如菜单列表、添加菜单、编辑菜单都是'menu'，用户列表、添加用户、编辑用户都是'user'，如此类推
- */
-
-const constantRouterMap = [
-  { path: '/', component: Login, name: 'Login' },
+* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+* name:'router-name'             the name is used by <keep-alive> (must set!!!)
+* meta : {
+    role: ['admin','editor']     will control the page role (you can set multiple roles)
+    title: 'title'               the name show in submenu and breadcrumb (recommend set)
+    icon: 'svg-name'             the icon show in the sidebar,
+    noCache: true                if fasle ,the page will no be cached(default is false)
+  }
+**/
+export const constantRouterMap = [
+  { path: '/login', component: _import('login/index'), hidden: true },
+  { path: '/authredirect', component: _import('login/authredirect'), hidden: true },
+  { path: '/404', component: _import('errorPage/404'), hidden: true },
+  { path: '/401', component: _import('errorPage/401'), hidden: true },
   {
-    path: '/home',
-    component: Home,
-    children: [{ path: '/refresh', component: refresh, name: 'refresh' }]
+    path: '',
+    component: Layout,
+    redirect: 'dashboard',
+    children: [{
+      path: 'dashboard',
+      component: _import('dashboard/index'),
+      name: 'dashboard',
+      meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+    }]
   },
   {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'menu/list',
-        component: menuList,
-        name: 'menuList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }
-      },
-      {
-        path: 'menu/add',
-        component: menuAdd,
-        name: 'menuAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }
-      },
-      {
-        path: 'menu/edit/:id',
-        component: menuEdit,
-        name: 'menuEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'menu' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'tasks/list',
-        component: tasksList,
-        name: 'tasksList',
-        meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }
-      },
-      {
-        path: 'tasks/add',
-        component: tasksAdd,
-        name: 'tasksAdd',
-        meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }
-      },
-      {
-        path: 'tasks/edit/:id',
-        component: tasksEdit,
-        name: 'tasksEdit',
-        meta: { hideLeft: false, module: 'Administrative', tasks: 'tasks' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'config/add',
-        component: systemConfig,
-        name: 'systemConfig',
-        meta: {
-          hideLeft: false,
-          module: 'Administrative',
-          menu: 'systemConfig'
-        }
-      }
-    ]
-  },
-
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'rule/list',
-        component: ruleList,
-        name: 'ruleList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'rule' }
-      },
-      {
-        path: 'rule/add',
-        component: ruleAdd,
-        name: 'ruleAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'rule' }
-      },
-      {
-        path: 'rule/edit/:id',
-        component: ruleEdit,
-        name: 'ruleEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'rule' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'position/list',
-        component: positionList,
-        name: 'positionList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'position' }
-      },
-      {
-        path: 'position/add',
-        component: positionAdd,
-        name: 'positionAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'position' }
-      },
-      {
-        path: 'position/edit/:id',
-        component: positionEdit,
-        name: 'positionEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'position' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'structures/list',
-        component: structuresList,
-        name: 'structuresList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'structures' }
-      },
-      {
-        path: 'structures/add',
-        component: structuresAdd,
-        name: 'structuresAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'structures' }
-      },
-      {
-        path: 'structures/edit/:id',
-        component: structuresEdit,
-        name: 'structuresEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'structures' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'groups/list',
-        component: groupsList,
-        name: 'groupsList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'groups' }
-      },
-      {
-        path: 'groups/add',
-        component: groupsAdd,
-        name: 'groupsAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'groups' }
-      },
-      {
-        path: 'groups/edit/:id',
-        component: groupsEdit,
-        name: 'groupsEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'groups' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Home,
-    children: [
-      {
-        path: 'users/list',
-        component: usersList,
-        name: 'usersList',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'users' }
-      },
-      {
-        path: 'users/add',
-        component: usersAdd,
-        name: 'usersAdd',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'users' }
-      },
-      {
-        path: 'users/edit/:id',
-        component: usersEdit,
-        name: 'usersEdit',
-        meta: { hideLeft: false, module: 'Administrative', menu: 'users' }
-      }
-    ]
+    path: '/documentation',
+    component: Layout,
+    redirect: '/documentation/index',
+    children: [{
+      path: 'index',
+      component: _import('documentation/index'),
+      name: 'documentation',
+      meta: { title: 'documentation', icon: 'documentation', noCache: true }
+    }]
   }
 ]
 
@@ -241,247 +56,182 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
-  // {
-  //   path: '/permission',
-  //   component: Layout,
-  //   redirect: '/permission/index',
-  //   name: '权限测试',
-  //   icon: 'lock',
-  //   meta: { role: ['admin'] },
-  //   noDropdown: true,
-  //   children: [{ path: 'index', component: require('@/views/permission/index.vue'), name: '权限测试页', meta: { role: ['admin'] }}]
-  // },
-  // {
-  //   path: '/icon',
-  //   component: Layout,
-  //   icon: 'icon',
-  //   noDropdown: true,
-  //   children: [{ path: 'index', component: require('@/views/svg-icons.vue/index'), name: 'icons' }]
-  // },
+  {
+    path: '/permission',
+    component: Layout,
+    redirect: '/permission/index',
+    meta: { role: ['admin'] },
+    children: [{
+      path: 'index',
+      component: _import('permission/index'),
+      name: 'permission',
+      meta: {
+        title: 'permission',
+        icon: 'lock',
+        role: ['admin']
+      }
+    }]
+  },
+
+  {
+    path: '/icon',
+    component: Layout,
+    children: [{
+      path: 'index',
+      component: _import('svg-icons/index'),
+      name: 'icons',
+      meta: { title: 'icons', icon: 'icon', noCache: true }
+    }]
+  },
+
   {
     path: '/components',
     component: Layout,
-    redirect: '/components/index',
-    name: '组件',
-    icon: 'component',
+    redirect: 'noredirect',
+    name: 'component-demo',
+    meta: {
+      title: 'components',
+      icon: 'component'
+    },
     children: [
-      { path: 'index', component: require('@/views/components/index.vue'), name: '介绍 ' },
-      {
-        path: 'tinymce',
-        component: require('@/views/components/tinymce.vue'),
-        name: '富文本编辑器'
-      },
-      {
-        path: 'markdown',
-        component: require('@/views/components/markdown.vue'),
-        name: 'Markdown'
-      },
-      {
-        path: 'jsoneditor',
-        component: require('@/views/components/jsonEditor.vue'),
-        name: 'JSON编辑器'
-      },
-      {
-        path: 'dndlist',
-        component: require('@/views/components/dndList.vue'),
-        name: '列表拖拽'
-      },
-      {
-        path: 'splitpane',
-        component: require('@/views/components/splitpane.vue'),
-        name: 'SplitPane'
-      },
-      {
-        path: 'avatarupload',
-        component: require('@/views/components/avatarUpload.vue'),
-        name: '头像上传'
-      },
-      {
-        path: 'dropzone',
-        component: require('@/views/components/dropzone.vue'),
-        name: 'Dropzone'
-      },
-      {
-        path: 'sticky',
-        component: require('@/views/components/sticky.vue'),
-        name: 'Sticky'
-      },
-      {
-        path: 'countto',
-        component: require('@/views/components/countTo.vue'),
-        name: 'CountTo'
-      },
-      { path: 'mixin', component: require('@/views/components/mixin.vue'), name: '小组件' },
-      {
-        path: 'backtotop',
-        component: require('@/views/components/backToTop.vue'),
-        name: '返回顶部'
-      }
+      { path: 'tinymce', component: _import('components-demo/tinymce'), name: 'tinymce-demo', meta: { title: 'tinymce' }},
+      { path: 'markdown', component: _import('components-demo/markdown'), name: 'markdown-demo', meta: { title: 'markdown' }},
+      { path: 'json-editor', component: _import('components-demo/jsonEditor'), name: 'jsonEditor-demo', meta: { title: 'jsonEditor' }},
+      { path: 'dnd-list', component: _import('components-demo/dndList'), name: 'dndList-demo', meta: { title: 'dndList' }},
+      { path: 'splitpane', component: _import('components-demo/splitpane'), name: 'splitpane-demo', meta: { title: 'splitPane' }},
+      { path: 'avatar-upload', component: _import('components-demo/avatarUpload'), name: 'avatarUpload-demo', meta: { title: 'avatarUpload' }},
+      { path: 'dropzone', component: _import('components-demo/dropzone'), name: 'dropzone-demo', meta: { title: 'dropzone' }},
+      { path: 'sticky', component: _import('components-demo/sticky'), name: 'sticky-demo', meta: { title: 'sticky' }},
+      { path: 'count-to', component: _import('components-demo/countTo'), name: 'countTo-demo', meta: { title: 'countTo' }},
+      { path: 'mixin', component: _import('components-demo/mixin'), name: 'componentMixin-demo', meta: { title: 'componentMixin' }},
+      { path: 'back-to-top', component: _import('components-demo/backToTop'), name: 'backToTop-demo', meta: { title: 'backToTop' }}
     ]
   },
+
   {
     path: '/charts',
     component: Layout,
-    redirect: '/charts/index',
-    name: '图表',
-    icon: 'chart',
+    redirect: 'noredirect',
+    name: 'charts',
+    meta: {
+      title: 'charts',
+      icon: 'chart'
+    },
     children: [
-      { path: 'index', component: require('@/views/charts/index.vue'), name: '介绍' },
-      {
-        path: 'keyboard',
-        component: require('@/views/charts/keyboard.vue'),
-        name: '键盘图表'
-      },
-      {
-        path: 'keyboard2',
-        component: require('@/views/charts/keyboard2.vue'),
-        name: '键盘图表2'
-      },
-      { path: 'line', component: require('@/views/charts/line.vue'), name: '折线图' },
-      {
-        path: 'mixchart',
-        component: require('@/views/charts/mixChart.vue'),
-        name: '混合图表'
-      }
+      { path: 'keyboard', component: _import('charts/keyboard'), name: 'keyboardChart', meta: { title: 'keyboardChart', noCache: true }},
+      { path: 'line', component: _import('charts/line'), name: 'lineChart', meta: { title: 'lineChart', noCache: true }},
+      { path: 'mixchart', component: _import('charts/mixChart'), name: 'mixChart', meta: { title: 'mixChart', noCache: true }}
     ]
   },
+
   {
     path: '/example',
     component: Layout,
-    redirect: 'noredirect',
-    name: '综合实例',
-    icon: 'example',
+    redirect: '/example/table/complex-table',
+    name: 'example',
+    meta: {
+      title: 'example',
+      icon: 'example'
+    },
     children: [
       {
         path: '/example/table',
-        component: require('@/views/example/table/index.vue'),
-        redirect: '/example/table/table',
+        component: _import('example/table/index'),
+        redirect: '/example/table/complex-table',
         name: 'Table',
-        icon: 'table',
+        meta: {
+          title: 'Table',
+          icon: 'table'
+        },
         children: [
-          {
-            path: 'dynamictable',
-            component: require('@/views/example/table/dynamictable/index.vue'),
-            name: '动态table'
-          },
-          {
-            path: 'dragtable',
-            component: require('@/views/example/table/dragTable.vue'),
-            name: '拖拽table'
-          },
-          {
-            path: 'inline_edit_table',
-            component: require('@/views/example/table/inlineEditTable.vue'),
-            name: 'table内编辑'
-          },
-          {
-            path: 'table',
-            component: require('@/views/example/table/table.vue'),
-            name: '综合table'
-          }
+          { path: 'dynamic-table', component: _import('example/table/dynamicTable/index'), name: 'dynamicTable', meta: { title: 'dynamicTable' }},
+          { path: 'drag-table', component: _import('example/table/dragTable'), name: 'dragTable', meta: { title: 'dragTable' }},
+          { path: 'inline-edit-table', component: _import('example/table/inlineEditTable'), name: 'inlineEditTable', meta: { title: 'inlineEditTable' }},
+          { path: 'complex-table', component: _import('example/table/complexTable'), name: 'complexTable', meta: { title: 'complexTable' }}
         ]
       },
-      {
-        path: 'form/edit',
-        icon: 'form',
-        component: require('@/views/example/form.vue'),
-        name: '编辑Form',
-        meta: { isEdit: true }
-      },
-      {
-        path: 'form/create',
-        icon: 'form',
-        component: require('@/views/example/form.vue'),
-        name: '创建Form'
-      },
-      {
-        path: 'tab/index',
-        icon: 'tab',
-        component: require('@/views/example/tab/index.vue'),
-        name: 'Tab'
-      }
+      { path: 'tab/index', icon: 'tab', component: _import('example/tab/index'), name: 'tab', meta: { title: 'tab' }}
     ]
   },
+
+  {
+    path: '/form',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'form',
+    meta: {
+      title: 'form',
+      icon: 'form'
+    },
+    children: [
+      { path: 'create-form', component: _import('form/create'), name: 'createForm', meta: { title: 'createForm', icon: 'table' }},
+      { path: 'edit-form', component: _import('form/edit'), name: 'editForm', meta: { title: 'editForm', icon: 'table' }}
+    ]
+  },
+
   {
     path: '/error',
     component: Layout,
     redirect: 'noredirect',
-    name: '错误页面',
-    icon: '404',
+    name: 'errorPages',
+    meta: {
+      title: 'errorPages',
+      icon: '404'
+    },
     children: [
-      { path: '401', component: require('@/views/errorPage/401.vue'), name: '401' },
-      { path: '404', component: require('@/views/errorPage/404.vue'), name: '404' }
+      { path: '401', component: _import('errorPage/401'), name: 'page401', meta: { title: 'page401', noCache: true }},
+      { path: '404', component: _import('errorPage/404'), name: 'page404', meta: { title: 'page404', noCache: true }}
     ]
   },
+
   {
-    path: '/errlog',
+    path: '/error-log',
     component: Layout,
     redirect: 'noredirect',
-    name: 'errlog',
-    icon: 'bug',
-    noDropdown: true,
-    children: [
-      { path: 'log', component: require('@/views/errlog/index.vue'), name: '错误日志' }
-    ]
+    children: [{ path: 'log', component: _import('errorLog/index'), name: 'errorLog', meta: { title: 'errorLog', icon: 'bug' }}]
   },
+
   {
     path: '/excel',
     component: Layout,
-    redirect: '/excel/download',
+    redirect: '/excel/export-excel',
     name: 'excel',
-    icon: 'excel',
+    meta: {
+      title: 'excel',
+      icon: 'excel'
+    },
     children: [
-      {
-        path: 'download',
-        component: require('@/views/excel/index.vue'),
-        name: 'export excel'
-      },
-      {
-        path: 'download2',
-        component: require('@/views/excel/selectExcel.vue'),
-        name: 'export selected'
-      },
-      {
-        path: 'upload',
-        component: require('@/views/excel/uploadExcel.vue'),
-        name: 'upload excel'
-      }
+      { path: 'export-excel', component: _import('excel/exportExcel'), name: 'exportExcel', meta: { title: 'exportExcel' }},
+      { path: 'export-selected-excel', component: _import('excel/selectExcel'), name: 'selectExcel', meta: { title: 'selectExcel' }},
+      { path: 'upload-excel', component: _import('excel/uploadExcel'), name: 'uploadExcel', meta: { title: 'uploadExcel' }}
     ]
   },
+
   {
     path: '/zip',
     component: Layout,
     redirect: '/zip/download',
-    name: 'zip',
-    icon: 'zip',
-    children: [
-      { path: 'download', component: require('@/views/zip/index.vue'), name: 'export zip' }
-    ]
+    children: [{ path: 'download', component: _import('zip/index'), name: 'exportZip', meta: { title: 'exportZip', icon: 'zip' }}]
   },
+
   {
     path: '/theme',
     component: Layout,
     redirect: 'noredirect',
-    name: 'theme',
-    icon: 'theme',
-    noDropdown: true,
-    children: [
-      { path: 'index', component: require('@/views/theme/index.vue'), name: '换肤' }
-    ]
+    children: [{ path: 'index', component: _import('theme/index'), name: 'theme', meta: { title: 'theme', icon: 'theme' }}]
   },
+
   {
     path: '/clipboard',
     component: Layout,
     redirect: 'noredirect',
-    icon: 'clipboard',
-    noDropdown: true,
-    children: [
-      {
-        path: 'index',
-        component: require('@/views/clipboard/index.vue'),
-        name: 'clipboard'
-      }
-    ]
+    children: [{ path: 'index', component: _import('clipboard/index'), name: 'clipboardDemo', meta: { title: 'clipboardDemo', icon: 'clipboard' }}]
+  },
+
+  {
+    path: '/i18n',
+    component: Layout,
+    children: [{ path: 'index', component: _import('i18n-demo/index'), name: 'i18n', meta: { title: 'i18n', icon: 'international' }}]
   },
 
   { path: '*', redirect: '/404', hidden: true }

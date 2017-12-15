@@ -2,15 +2,8 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
-var webpack = require('webpack')
 
-var ExtractTextPlugin = require("extract-text-webpack-plugin")
-
-var DEV_HOST = JSON.stringify('http://localhost:80/')
-var PUB_HOST = JSON.stringify('http://localhost:80/')
-
-
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -21,9 +14,7 @@ module.exports = {
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: process.env.NODE_ENV === 'production' ? config.build.assetsPublicPath : config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
@@ -44,29 +35,17 @@ module.exports = {
       'static': path.resolve(__dirname, '../static')
     }
   },
-
-  plugins: [
-    new webpack.DefinePlugin({
-      HOST: process.env.NODE_ENV === 'production' ? PUB_HOST : DEV_HOST
-    })
-  ],
-
-
-
-
   module: {
     rules: [
-      // {
-      //   test: /\.(js|vue)$/,
-      //   loader: 'eslint-loader',
-      //   enforce: "pre",
-      //   include: [resolve('src'), resolve('test')],
-      //   options: {
-      //     formatter: require('eslint-friendly-formatter')
-      //   }
-      // },
-
-
+      {
+        test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
+        enforce: "pre",
+        include: [resolve('src'), resolve('test')],
+        options: {
+            formatter: require('eslint-friendly-formatter')
+        }
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -74,13 +53,22 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loader: 'babel-loader?cacheDirectory',
         include: [resolve('src'), resolve('test')]
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-sprite-loader',
+        include: [resolve('src/icons')],
+        options: {
+          symbolId: 'icon-[name]'
+        }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
-        query: {
+        exclude: [resolve('src/icons')],
+        options: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
@@ -88,24 +76,17 @@ module.exports = {
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
-        query: {
+        options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      },
-      // {
-      //   test: /\.styl$/,
-      //   loader: ExtractTextPlugin.extract(['css-loader','postcss-loader', 'stylus-loader'])
-      // }
-
-
+      }
     ]
   },
-
-
-  // plugins: [
-  //   new ExtractTextPlugin("css/[name].css")
-  // ]
-
-
+  //注入全局mixin
+  // sassResources: path.join(__dirname, '../src/styles/mixin.scss'),
+  // sassLoader: {
+  //     data:  path.join(__dirname, '../src/styles/index.scss')
+  // },
 }
+

@@ -1,4 +1,5 @@
 var utils = require('./utils')
+var path = require('path')
 var webpack = require('webpack')
 var config = require('../config')
 var merge = require('webpack-merge')
@@ -11,12 +12,17 @@ Object.keys(baseWebpackConfig.entry).forEach(function (name) {
   baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
 })
 
+function resolveApp(relativePath) {
+  return path.resolve(relativePath);
+}
+
 module.exports = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
+    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
   },
-  // cheap-module-eval-source-map is faster for development
-  devtool: '#cheap-module-eval-source-map',
+  // cheap-source-map is faster for development
+  devtool: '#cheap-source-map',
+  cache: true,
   plugins: [
     new webpack.DefinePlugin({
       'process.env': config.dev.env
@@ -28,8 +34,11 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      inject: true
+      favicon: resolveApp('favicon.ico'),
+      inject: true,
+      path: config.dev.assetsPublicPath + config.dev.assetsSubDirectory
     }),
     new FriendlyErrorsPlugin()
   ]
 })
+
