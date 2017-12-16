@@ -1,8 +1,8 @@
 {
-  "name": "vue-element-admin",
+  "name": "node-crawler-admin",
   "version": "3.3.0",
-  "description": "A Vue.js admin",
-  "author": "Pan <panfree23@gmail.com>",
+  "description": "Node crawler Admin",
+  "author": "Xank <xank@qq.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
